@@ -6,6 +6,7 @@ import android.content.Intent
 import com.peakvalle.hours.data.notification.Notifications
 import com.peakvalle.hours.data.settings.SettingsRepository
 import com.peakvalle.hours.domain.ScheduleEngine
+import com.peakvalle.hours.widget.PeakValleWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -45,6 +46,9 @@ class TransitionReceiver : BroadcastReceiver() {
 
                 // Siempre debe quedar una alarma pendiente para el próximo cambio.
                 TransitionScheduler.scheduleNext(appContext, settings, now)
+
+                // El widget muestra la misma cuenta regresiva: hay que refrescarlo.
+                PeakValleWidget.refresh(appContext)
             } finally {
                 pendingResult.finish()
             }

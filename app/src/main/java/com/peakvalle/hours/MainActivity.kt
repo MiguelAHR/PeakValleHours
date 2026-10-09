@@ -10,6 +10,7 @@ import com.peakvalle.hours.data.notification.NotificationChannels
 import com.peakvalle.hours.data.settings.SettingsRepository
 import com.peakvalle.hours.ui.PeakValleApp
 import com.peakvalle.hours.ui.theme.PeakValleTheme
+import com.peakvalle.hours.widget.PeakValleWidget
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -24,6 +25,7 @@ class MainActivity : ComponentActivity() {
             val settings = SettingsRepository(applicationContext).settings.first()
             NotificationChannels.create(this@MainActivity, settings.soundType, settings.soundUri)
             TransitionScheduler.scheduleNext(this@MainActivity, settings)
+            PeakValleWidget.refresh(this@MainActivity)
         }
 
         setContent {
