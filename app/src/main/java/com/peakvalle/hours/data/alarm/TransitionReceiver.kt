@@ -49,6 +49,10 @@ class TransitionReceiver : BroadcastReceiver() {
 
                 // El widget muestra la misma cuenta regresiva: hay que refrescarlo.
                 PeakValleWidget.refresh(appContext)
+
+                if (settings.ongoingEnabled) {
+                    Notifications.showOngoing(appContext, rate)
+                }
             } finally {
                 pendingResult.finish()
             }

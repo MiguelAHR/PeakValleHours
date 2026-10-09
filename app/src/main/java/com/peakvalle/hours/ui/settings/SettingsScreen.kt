@@ -60,7 +60,8 @@ fun SettingsRoute(
         onBack = onBack,
         onNotificationsChanged = viewModel::setNotificationsEnabled,
         onLeadMinutesChanged = viewModel::setLeadMinutes,
-        onSoundChanged = viewModel::setSound
+        onSoundChanged = viewModel::setSound,
+        onOngoingChanged = viewModel::setOngoingEnabled
     )
 }
 
@@ -71,6 +72,7 @@ fun SettingsScreen(
     onNotificationsChanged: (Boolean) -> Unit,
     onLeadMinutesChanged: (Int) -> Unit,
     onSoundChanged: (SoundType, String) -> Unit,
+    onOngoingChanged: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -123,7 +125,8 @@ fun SettingsScreen(
             NotificationsCard(
                 settings = settings,
                 onNotificationsChanged = onNotificationsChanged,
-                onLeadMinutesChanged = onLeadMinutesChanged
+                onLeadMinutesChanged = onLeadMinutesChanged,
+                onOngoingChanged = onOngoingChanged
             )
 
             SoundCard(
@@ -144,7 +147,8 @@ fun SettingsScreen(
 private fun NotificationsCard(
     settings: AppSettings,
     onNotificationsChanged: (Boolean) -> Unit,
-    onLeadMinutesChanged: (Int) -> Unit
+    onLeadMinutesChanged: (Int) -> Unit,
+    onOngoingChanged: (Boolean) -> Unit
 ) {
     val accent = MaterialTheme.colorScheme.primary
 
@@ -198,6 +202,35 @@ private fun NotificationsCard(
             },
             onSelect = onLeadMinutesChanged
         )
+
+        Spacer(Modifier.height(18.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.settings_ongoing),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = OnSurfaceLight
+                )
+                Text(
+                    text = stringResource(R.string.settings_ongoing_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = OnSurfaceVariantLight
+                )
+            }
+            Switch(
+                checked = settings.ongoingEnabled,
+                onCheckedChange = onOngoingChanged,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = accent,
+                    checkedTrackColor = accent.copy(alpha = 0.35f)
+                )
+            )
+        }
     }
 }
 

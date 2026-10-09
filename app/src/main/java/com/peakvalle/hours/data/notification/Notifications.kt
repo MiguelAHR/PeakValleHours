@@ -24,6 +24,9 @@ object Notifications {
     /** Id del aviso anticipado. */
     const val LEAD_ID = 2002
 
+    /** Id de la notificación persistente con cuenta regresiva. */
+    const val ONGOING_ID = 2003
+
     fun areEnabled(context: Context): Boolean =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ContextCompat.checkSelfPermission(
@@ -100,6 +103,52 @@ object Notifications {
 
     private fun notify(context: Context, id: Int, notification: android.app.Notification) {
         context.getSystemService(NotificationManager::class.java)?.notify(id, notification)
+    }
+
+    /**
+     * Notificación persistente con la cuenta regresiva en vivo.
+     *
+     * `setChronometerCountDown` hace que el sistema pinte la cuenta atrás, así que
+     * no hace falta actualizarla cada segundo.
+     */
+    fun showOngoing(context: Context, rate: CurrentRate) {
+        NotificationChannels.create(context)
+
+        val zone = TimeZone.currentSystemDefault()
+        val titleRes = if (rate.isPeak) R.string.status_peak else R.string.status_valle
+        val nextRes = if (rate.isPeak) R.string.status_valle else R.string.status_peak
+        val nextStart = rate.next?.start
+
+        val text = if (nextStart != null) {
+            context.getString(
+                R.string.notif_ongoing_text,
+                context.getString(nextRes),
+                nextStart.formatLocalTime(zone)
+            )
+        } else {
+            context.getString(R.string.countdown_label)
+        }
+
+        val notification = NotificationCompat.Builder(context, NotificationChannels.STATUS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(context.getString(titleRes))
+            .setContentText(text)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setSilent(true)
+            .setShowWhen(false)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .setWhen(rate.window.end.toEpochMilliseconds())
+            .setUsesChronometer(true)
+            .setChronometerCountDown(true)
+            .setContentIntent(openAppIntent(context))
+            .build()
+
+        notify(context, ONGOING_ID, notification)
+    }
+
+    fun cancelOngoing(context: Context) {
+        context.getSystemService(NotificationManager::class.java)?.cancel(ONGOING_ID)
     }
 
     private fun openAppIntent(context: Context): PendingIntent {

@@ -21,7 +21,8 @@ data class AppSettings(
     val notificationsEnabled: Boolean = true,
     val leadMinutes: Int = 0,
     val soundType: SoundType = SoundType.DEFAULT,
-    val soundUri: String = ""
+    val soundUri: String = "",
+    val ongoingEnabled: Boolean = false
 ) {
     companion object {
         /** Opciones de antelación ofrecidas en ajustes, en minutos. */

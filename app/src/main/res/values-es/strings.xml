@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PeakValle</string>
+    <string name="brand_name">PeakValle</string>
+
+    <string name="status_now">AHORA</string>
+    <string name="status_peak">HORA PEAK</string>
+    <string name="status_valle">HORA VALLE</string>
+
+    <string name="price_peak">Precio completo</string>
+    <string name="price_valle">50% de descuento</string>
+
+    <string name="countdown_label">Cambia en</string>
+    <string name="next_change">Próximo cambio</string>
+    <string name="agenda_24h">Próximas 24 horas</string>
+
+    <string name="legend_peak">PEAK</string>
+    <string name="legend_valle">VALLE</string>
+
+    <!-- Notificaciones -->
+    <string name="channel_transitions_name">Cambios de tarifa</string>
+    <string name="channel_transitions_desc">Aviso al entrar en HORA PEAK o HORA VALLE de DeepSeek</string>
+    <string name="channel_status_name">Estado actual</string>
+    <string name="channel_status_desc">Estado de la tarifa vigente, sin sonido</string>
+
+    <string name="notif_title_peak">Entró la HORA PEAK</string>
+    <string name="notif_title_valle">Entró la HORA VALLE</string>
+    <string name="notif_body_peak">Ahora pagas precio completo. La próxima HORA VALLE empieza a las %1$s.</string>
+    <string name="notif_body_valle">Ahora pagas 50%% menos. La próxima HORA PEAK empieza a las %1$s.</string>
+
+    <!-- Permisos -->
+    <string name="perm_notifications_title">Activa las notificaciones</string>
+    <string name="perm_notifications_body">PeakValle te avisa en el momento exacto en que DeepSeek cambia de tarifa.</string>
+    <string name="perm_notifications_action">Activar</string>
+    <string name="perm_exact_alarm_body">Sin permiso de alarma exacta, el aviso puede llegar con unos minutos de retraso.</string>
+    <string name="perm_exact_alarm_action">Abrir ajustes</string>
+
+    <!-- Aviso anticipado -->
+    <string name="notif_title_upcoming">Va a cambiar a %1$s</string>
+    <string name="notif_body_upcoming">El cambio de tarifa es a las %1$s.</string>
+
+    <!-- Ajustes -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_back">Volver</string>
+    <string name="settings_open">Abrir ajustes</string>
+
+    <string name="settings_notifications">Notificaciones</string>
+    <string name="settings_notifications_desc">Aviso al cambiar de tarifa</string>
+    <string name="settings_advance">Aviso anticipado</string>
+    <string name="settings_advance_desc">Avisa antes de que empiece la nueva tarifa</string>
+    <string name="settings_lead_off">Solo al cambiar</string>
+
+    <string name="settings_ongoing">Notificación persistente</string>
+    <string name="settings_ongoing_desc">Muestra el estado y la cuenta atrás en la barra de notificaciones</string>
+    <string name="notif_ongoing_text">Cambia a %1$s a las %2$s</string>
+
+    <string name="settings_sound">Sonido</string>
+    <string name="settings_sound_desc">Sonido del aviso de cambio de tarifa</string>
+    <string name="settings_sound_default">Predeterminado</string>
+    <string name="settings_sound_silent">Silencioso</string>
+    <string name="settings_sound_custom">Elegir audio…</string>
+    <string name="settings_sound_custom_selected">Audio personalizado ✓</string>
+
+    <string name="settings_schedule_title">Horario de DeepSeek (UTC)</string>
+    <string name="settings_schedule_utc">PEAK: 01:00–04:00 y 06:00–10:00, de lunes a viernes.</string>
+    <string name="settings_schedule_local">La app muestra la hora de tu zona, pero las franjas se calculan siempre en UTC.</string>
+
+    <!-- Widget -->
+    <string name="widget_description">Estado PEAK o VALLE de DeepSeek con cuenta regresiva</string>
+</resources>

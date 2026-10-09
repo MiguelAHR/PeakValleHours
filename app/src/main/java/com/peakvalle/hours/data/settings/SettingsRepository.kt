@@ -30,7 +30,8 @@ class SettingsRepository(private val context: Context) {
                 soundType = prefs[KEY_SOUND_TYPE]
                     ?.let { name -> SoundType.entries.firstOrNull { it.name == name } }
                     ?: SoundType.DEFAULT,
-                soundUri = prefs[KEY_SOUND_URI] ?: ""
+                soundUri = prefs[KEY_SOUND_URI] ?: "",
+                ongoingEnabled = prefs[KEY_ONGOING] ?: false
             )
         }
 
@@ -49,8 +50,13 @@ class SettingsRepository(private val context: Context) {
         }
     }
 
+    suspend fun setOngoingEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[KEY_ONGOING] = enabled }
+    }
+
     private companion object {
         val KEY_ENABLED = booleanPreferencesKey("notifications_enabled")
+        val KEY_ONGOING = booleanPreferencesKey("ongoing_enabled")
         val KEY_LEAD = intPreferencesKey("lead_minutes")
         val KEY_SOUND_TYPE = stringPreferencesKey("sound_type")
         val KEY_SOUND_URI = stringPreferencesKey("sound_uri")

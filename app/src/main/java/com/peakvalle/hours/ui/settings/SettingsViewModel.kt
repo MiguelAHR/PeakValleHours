@@ -38,6 +38,10 @@ class SettingsViewModel(
         viewModelScope.launch { repository.setSound(type, uri) }
     }
 
+    fun setOngoingEnabled(enabled: Boolean) {
+        viewModelScope.launch { repository.setOngoingEnabled(enabled) }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
