@@ -60,6 +60,7 @@
     <string name="settings_sound_silent">Silencioso</string>
     <string name="settings_sound_custom">Elegir audio…</string>
     <string name="settings_sound_custom_selected">Audio personalizado ✓</string>
+    <string name="settings_sound_preview">Escuchar</string>
 
     <string name="settings_schedule_title">Horario de DeepSeek (UTC)</string>
     <string name="settings_schedule_utc">PEAK: 01:00–04:00 y 06:00–10:00, de lunes a viernes.</string>

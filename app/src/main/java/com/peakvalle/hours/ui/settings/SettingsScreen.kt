@@ -12,22 +12,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.peakvalle.hours.R
 import com.peakvalle.hours.data.notification.NotificationChannels
+import com.peakvalle.hours.data.notification.SoundPreview
 import com.peakvalle.hours.domain.model.AppSettings
 import com.peakvalle.hours.domain.model.SoundType
 import com.peakvalle.hours.ui.components.NeonCard
@@ -76,6 +82,9 @@ fun SettingsScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+
+    val preview = remember { SoundPreview(context) }
+    DisposableEffect(Unit) { onDispose { preview.release() } }
 
     val pickSound = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
@@ -135,7 +144,8 @@ fun SettingsScreen(
                     onSoundChanged(type, uri)
                     NotificationChannels.create(context, type, uri)
                 },
-                onPickCustom = { pickSound.launch(arrayOf("audio/*")) }
+                onPickCustom = { pickSound.launch(arrayOf("audio/*")) },
+                onPreview = { preview.play(settings.soundType, settings.soundUri) }
             )
 
             InfoCard()
@@ -238,7 +248,8 @@ private fun NotificationsCard(
 private fun SoundCard(
     settings: AppSettings,
     onSoundChanged: (SoundType, String) -> Unit,
-    onPickCustom: () -> Unit
+    onPickCustom: () -> Unit,
+    onPreview: () -> Unit
 ) {
     val accent = MaterialTheme.colorScheme.secondary
 
@@ -282,6 +293,28 @@ private fun SoundCard(
             accent = accent,
             onClick = onPickCustom
         )
+
+        Spacer(Modifier.height(12.dp))
+
+        OutlinedButton(
+            onClick = onPreview,
+            enabled = settings.soundType != SoundType.SILENT
+        ) {
+            Icon(
+                imageVector = Icons.Filled.PlayArrow,
+                contentDescription = null,
+                tint = accent
+            )
+            Spacer(Modifier.width(6.dp))
+            Text(
+                text = stringResource(R.string.settings_sound_preview),
+                color = if (settings.soundType == SoundType.SILENT) {
+                    OnSurfaceVariantLight
+                } else {
+                    accent
+                }
+            )
+        }
     }
 }
 

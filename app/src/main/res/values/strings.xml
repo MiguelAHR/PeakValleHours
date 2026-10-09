@@ -60,6 +60,7 @@
     <string name="settings_sound_silent">Silent</string>
     <string name="settings_sound_custom">Choose audio…</string>
     <string name="settings_sound_custom_selected">Custom audio ✓</string>
+    <string name="settings_sound_preview">Listen</string>
 
     <string name="settings_schedule_title">DeepSeek schedule (UTC)</string>
     <string name="settings_schedule_utc">PEAK: 01:00–04:00 and 06:00–10:00, Monday to Friday.</string>
