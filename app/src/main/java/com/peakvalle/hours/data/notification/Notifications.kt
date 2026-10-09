@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import com.peakvalle.hours.MainActivity
 import com.peakvalle.hours.R
 import com.peakvalle.hours.domain.model.CurrentRate
+import com.peakvalle.hours.domain.model.AppSettings
 import com.peakvalle.hours.domain.model.SoundType
 import com.peakvalle.hours.ui.util.formatLocalTime
 import kotlinx.datetime.TimeZone
@@ -26,6 +27,9 @@ object Notifications {
 
     /** Id de la notificación persistente con cuenta regresiva. */
     const val ONGOING_ID = 2003
+
+    /** Id de la notificación de prueba. */
+    const val TEST_ID = 2004
 
     fun areEnabled(context: Context): Boolean =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -149,6 +153,36 @@ object Notifications {
 
     fun cancelOngoing(context: Context) {
         context.getSystemService(NotificationManager::class.java)?.cancel(ONGOING_ID)
+    }
+
+    /**
+     * Publica una notificación de prueba con el sonido y la vibración
+     * configurados, para que el usuario vea y oiga cómo llegará el aviso real.
+     */
+    fun showTest(context: Context, settings: AppSettings) {
+        val channelId = NotificationChannels.channelIdFor(settings.soundType, settings.soundUri)
+        NotificationChannels.create(context, settings.soundType, settings.soundUri)
+
+        val body = context.getString(
+            R.string.notif_test_body,
+            context.getString(if (settings.soundType == SoundType.SILENT) {
+                R.string.notif_test_silent
+            } else {
+                R.string.notif_test_with_sound
+            })
+        )
+
+        val notification = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(context.getString(R.string.notif_test_title))
+            .setContentText(body)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setAutoCancel(true)
+            .setContentIntent(openAppIntent(context))
+            .build()
+
+        notify(context, TEST_ID, notification)
     }
 
     private fun openAppIntent(context: Context): PendingIntent {

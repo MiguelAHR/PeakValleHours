@@ -61,6 +61,12 @@
     <string name="settings_sound_custom">Elegir audio…</string>
     <string name="settings_sound_custom_selected">Audio personalizado ✓</string>
     <string name="settings_sound_preview">Escuchar</string>
+    <string name="settings_send_test">Enviar aviso de prueba</string>
+
+    <string name="notif_test_title">Aviso de prueba</string>
+    <string name="notif_test_body">Así sonará el aviso cuando DeepSeek cambie de tarifa: %1$s.</string>
+    <string name="notif_test_with_sound">sonido y vibración</string>
+    <string name="notif_test_silent">sin sonido</string>
 
     <string name="settings_schedule_title">Horario de DeepSeek (UTC)</string>
     <string name="settings_schedule_utc">PEAK: 01:00–04:00 y 06:00–10:00, de lunes a viernes.</string>

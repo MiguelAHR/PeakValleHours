@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -32,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import com.peakvalle.hours.data.notification.Notifications
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,7 +69,8 @@ fun SettingsRoute(
         onNotificationsChanged = viewModel::setNotificationsEnabled,
         onLeadMinutesChanged = viewModel::setLeadMinutes,
         onSoundChanged = viewModel::setSound,
-        onOngoingChanged = viewModel::setOngoingEnabled
+        onOngoingChanged = viewModel::setOngoingEnabled,
+        onSendTest = viewModel::sendTest
     )
 }
 
@@ -79,6 +82,7 @@ fun SettingsScreen(
     onLeadMinutesChanged: (Int) -> Unit,
     onSoundChanged: (SoundType, String) -> Unit,
     onOngoingChanged: (Boolean) -> Unit = {},
+    onSendTest: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -99,6 +103,13 @@ fun SettingsScreen(
             }
             onSoundChanged(SoundType.CUSTOM, uri.toString())
             NotificationChannels.create(context, SoundType.CUSTOM, uri.toString())
+        }
+    }
+
+    // Si falta el permiso de notificaciones, se pide antes de enviar la prueba.
+    val sendTest: () -> Unit = {
+        if (Notifications.areEnabled(context)) {
+            onSendTest()
         }
     }
 
@@ -145,7 +156,8 @@ fun SettingsScreen(
                     NotificationChannels.create(context, type, uri)
                 },
                 onPickCustom = { pickSound.launch(arrayOf("audio/*")) },
-                onPreview = { preview.play(settings.soundType, settings.soundUri) }
+                onPreview = { preview.play(settings.soundType, settings.soundUri) },
+                onSendTest = sendTest
             )
 
             InfoCard()
@@ -249,7 +261,8 @@ private fun SoundCard(
     settings: AppSettings,
     onSoundChanged: (SoundType, String) -> Unit,
     onPickCustom: () -> Unit,
-    onPreview: () -> Unit
+    onPreview: () -> Unit,
+    onSendTest: () -> Unit
 ) {
     val accent = MaterialTheme.colorScheme.secondary
 
@@ -296,24 +309,39 @@ private fun SoundCard(
 
         Spacer(Modifier.height(12.dp))
 
-        OutlinedButton(
-            onClick = onPreview,
-            enabled = settings.soundType != SoundType.SILENT
-        ) {
-            Icon(
-                imageVector = Icons.Filled.PlayArrow,
-                contentDescription = null,
-                tint = accent
-            )
-            Spacer(Modifier.width(6.dp))
-            Text(
-                text = stringResource(R.string.settings_sound_preview),
-                color = if (settings.soundType == SoundType.SILENT) {
-                    OnSurfaceVariantLight
-                } else {
-                    accent
-                }
-            )
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(
+                onClick = onPreview,
+                enabled = settings.soundType != SoundType.SILENT
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.PlayArrow,
+                    contentDescription = null,
+                    tint = accent
+                )
+                Spacer(Modifier.width(6.dp))
+                Text(
+                    text = stringResource(R.string.settings_sound_preview),
+                    color = if (settings.soundType == SoundType.SILENT) {
+                        OnSurfaceVariantLight
+                    } else {
+                        accent
+                    }
+                )
+            }
+
+            OutlinedButton(onClick = onSendTest) {
+                Icon(
+                    imageVector = Icons.Filled.Notifications,
+                    contentDescription = null,
+                    tint = accent
+                )
+                Spacer(Modifier.width(6.dp))
+                Text(
+                    text = stringResource(R.string.settings_send_test),
+                    color = accent
+                )
+            }
         }
     }
 }

@@ -61,6 +61,12 @@
     <string name="settings_sound_custom">Choose audio…</string>
     <string name="settings_sound_custom_selected">Custom audio ✓</string>
     <string name="settings_sound_preview">Listen</string>
+    <string name="settings_send_test">Send test alert</string>
+
+    <string name="notif_test_title">Test notification</string>
+    <string name="notif_test_body">This is how the alert will sound when DeepSeek changes rate: %1$s.</string>
+    <string name="notif_test_with_sound">sound and vibration</string>
+    <string name="notif_test_silent">silent</string>
 
     <string name="settings_schedule_title">DeepSeek schedule (UTC)</string>
     <string name="settings_schedule_utc">PEAK: 01:00–04:00 and 06:00–10:00, Monday to Friday.</string>

@@ -7,16 +7,19 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.peakvalle.hours.data.notification.Notifications
 import com.peakvalle.hours.data.settings.SettingsRepository
 import com.peakvalle.hours.domain.model.AppSettings
 import com.peakvalle.hours.domain.model.SoundType
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val repository: SettingsRepository
+    private val repository: SettingsRepository,
+    private val app: Application
 ) : ViewModel() {
 
     val settings: StateFlow<AppSettings> = repository.settings
@@ -42,12 +45,21 @@ class SettingsViewModel(
         viewModelScope.launch { repository.setOngoingEnabled(enabled) }
     }
 
+    /** Publica una notificación de prueba con la configuración actual. */
+    fun sendTest() {
+        viewModelScope.launch {
+            val settings = repository.settings.first()
+            if (settings.notificationsEnabled && Notifications.areEnabled(app)) {
+                Notifications.showTest(app, settings)
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                SettingsViewModel(
-                    SettingsRepository(this[APPLICATION_KEY] as Application)
-                )
+                val app = this[APPLICATION_KEY] as Application
+                SettingsViewModel(SettingsRepository(app), app)
             }
         }
     }
