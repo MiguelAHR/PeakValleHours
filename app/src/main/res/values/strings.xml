@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PeakValle</string>
+    <string name="brand_name">PeakValle</string>
+
+    <string name="status_now">AHORA</string>
+    <string name="status_peak">HORA PEAK</string>
+    <string name="status_valle">HORA VALLE</string>
+
+    <string name="price_peak">Precio completo</string>
+    <string name="price_valle">50% de descuento</string>
+
+    <string name="countdown_label">Cambia en</string>
+    <string name="next_change">Próximo cambio</string>
+    <string name="agenda_24h">Próximas 24 horas</string>
+
+    <string name="legend_peak">PEAK</string>
+    <string name="legend_valle">VALLE</string>
 </resources>

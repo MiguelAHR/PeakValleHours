@@ -100,6 +100,34 @@ class ScheduleEngineTest {
     }
 
     @Test
+    fun `windowsBetween recorta la ventana en curso y respeta el limite superior`() {
+        val from = at("2026-01-05T02:00:00Z")
+        val until = at("2026-01-05T12:00:00Z")
+        val windows = engine.windowsBetween(from, until)
+
+        assertEquals(4, windows.size)
+        assertEquals(RateStatus.PEAK, windows[0].status)
+        assertEquals(from, windows[0].start)
+        assertEquals(at("2026-01-05T04:00:00Z"), windows[0].end)
+        assertEquals(RateStatus.PEAK, windows[2].status)
+        assertEquals(until, windows.last().end)
+    }
+
+    @Test
+    fun `windowsBetween cubre las 24 horas sin huecos`() {
+        val from = at("2026-01-09T20:00:00Z") // viernes por la tarde
+        val until = at("2026-01-10T20:00:00Z")
+        val windows = engine.windowsBetween(from, until)
+
+        assertEquals(from, windows.first().start)
+        assertEquals(until, windows.last().end)
+        windows.zipWithNext { a, b ->
+            assertEquals("ventanas contiguas", a.end, b.start)
+        }
+        assertEquals(24 * 60 * 60 * 1000L, windows.sumOf { it.duration.inWholeMilliseconds })
+    }
+
+    @Test
     fun `el progreso crece dentro de la ventana`() {
         val start = engine.currentRate(at("2026-01-05T06:00:00Z"))
         val middle = engine.currentRate(at("2026-01-05T08:00:00Z"))

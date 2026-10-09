@@ -32,6 +32,23 @@ class ScheduleEngine(
     fun nextTransition(instant: Instant): Instant = currentRate(instant).window.end
 
     /**
+     * Ventanas que se solapan con el rango `[from, until)`.
+     *
+     * Se usan para dibujar la agenda de las próximas horas. Las ventanas de
+     * los extremos se recortan a `[from, until)` para poder pintarlas como
+     * bloques parciales sin salirse del rango.
+     */
+    fun windowsBetween(from: Instant, until: Instant): List<RateWindow> =
+        buildTimeline(from)
+            .filter { it.end > from && it.start < until }
+            .map { window ->
+                window.copy(
+                    start = if (window.start < from) from else window.start,
+                    end = if (window.end > until) until else window.end
+                )
+            }
+
+    /**
      * Calcula el estado actual y las ventanas relevantes alrededor de [now].
      */
     fun currentRate(now: Instant): CurrentRate {
