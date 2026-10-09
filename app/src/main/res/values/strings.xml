@@ -34,4 +34,30 @@
     <string name="perm_notifications_action">Activar</string>
     <string name="perm_exact_alarm_body">Sin permiso de alarma exacta, el aviso puede llegar con unos minutos de retraso.</string>
     <string name="perm_exact_alarm_action">Abrir ajustes</string>
+
+    <!-- Aviso anticipado -->
+    <string name="notif_title_upcoming">Va a cambiar a %1$s</string>
+    <string name="notif_body_upcoming">El cambio de tarifa es a las %1$s.</string>
+
+    <!-- Ajustes -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_back">Volver</string>
+    <string name="settings_open">Abrir ajustes</string>
+
+    <string name="settings_notifications">Notificaciones</string>
+    <string name="settings_notifications_desc">Aviso al cambiar de tarifa</string>
+    <string name="settings_advance">Aviso anticipado</string>
+    <string name="settings_advance_desc">Avisa antes de que empiece la nueva tarifa</string>
+    <string name="settings_lead_off">Solo al cambiar</string>
+
+    <string name="settings_sound">Sonido</string>
+    <string name="settings_sound_desc">Sonido del aviso de cambio de tarifa</string>
+    <string name="settings_sound_default">Predeterminado</string>
+    <string name="settings_sound_silent">Silencioso</string>
+    <string name="settings_sound_custom">Elegir audio…</string>
+    <string name="settings_sound_custom_selected">Audio personalizado ✓</string>
+
+    <string name="settings_schedule_title">Horario de DeepSeek (UTC)</string>
+    <string name="settings_schedule_utc">PEAK: 01:00–04:00 y 06:00–10:00, de lunes a viernes.</string>
+    <string name="settings_schedule_local">La app muestra la hora de tu zona, pero las franjas se calculan siempre en UTC.</string>
 </resources>

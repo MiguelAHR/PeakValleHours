@@ -22,6 +22,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -65,17 +69,23 @@ fun RateStatus.accent(): Color = when (this) {
 
 @Composable
 fun DashboardRoute(
+    onOpenSettings: () -> Unit = {},
     zone: TimeZone = TimeZone.currentSystemDefault(),
     viewModel: DashboardViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    DashboardScreen(state = state, zone = zone)
+    DashboardScreen(
+        state = state,
+        zone = zone,
+        onOpenSettings = onOpenSettings
+    )
 }
 
 @Composable
 fun DashboardScreen(
     state: DashboardUiState,
     zone: TimeZone = TimeZone.currentSystemDefault(),
+    onOpenSettings: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -91,7 +101,7 @@ fun DashboardScreen(
                 .padding(top = 48.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Header(state.now, zone)
+            Header(state.now, zone, onOpenSettings)
             NotificationPermissionCard()
             StatusCard(state.rate, zone)
             NextChangeCard(state.rate, zone)
@@ -101,13 +111,13 @@ fun DashboardScreen(
 }
 
 @Composable
-private fun Header(now: Instant, zone: TimeZone) {
+private fun Header(now: Instant, zone: TimeZone, onOpenSettings: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = stringResource(R.string.brand_name),
                 style = MaterialTheme.typography.titleLarge,
@@ -126,6 +136,14 @@ private fun Header(now: Instant, zone: TimeZone) {
             fontFamily = FontFamily.Monospace,
             color = OnSurfaceLight
         )
+        Spacer(Modifier.width(8.dp))
+        IconButton(onClick = onOpenSettings) {
+            Icon(
+                imageVector = Icons.Filled.Settings,
+                contentDescription = stringResource(R.string.settings_open),
+                tint = OnSurfaceLight
+            )
+        }
     }
 }
 

@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.peakvalle.hours.domain.ScheduleEngine
+import com.peakvalle.hours.domain.model.AppSettings
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlin.time.Duration.Companion.minutes
 
 /**
  * Programa la alarma exacta del próximo cambio de tarifa y la reagenda sola
@@ -15,7 +17,8 @@ import kotlinx.datetime.Instant
  */
 object TransitionScheduler {
 
-    private const val REQUEST_CODE = 1001
+    private const val REQUEST_TRANSITION = 1001
+    private const val REQUEST_LEAD = 1002
 
     private val engine = ScheduleEngine()
 
@@ -29,43 +32,90 @@ object TransitionScheduler {
         }
     }
 
-    /** Agenda la alarma para el próximo cambio contado desde [now]. */
-    fun scheduleNext(context: Context, now: Instant = Clock.System.now()): Boolean {
+    /**
+     * Agenda el aviso de cambio y, si está configurado, el aviso anticipado.
+     */
+    fun scheduleNext(
+        context: Context,
+        settings: AppSettings,
+        now: Instant = Clock.System.now()
+    ): Boolean {
         val manager = context.getSystemService(AlarmManager::class.java) ?: return false
-        val target = engine.nextTransition(now)
-        val operation = pendingIntent(context)
+        if (!settings.notificationsEnabled) {
+            cancel(context)
+            return false
+        }
 
-        return try {
-            if (canScheduleExact(context)) {
-                manager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    target.toEpochMilliseconds(),
-                    operation
-                )
-            } else {
-                // Sin permiso de alarma exacta: aviso aproximado pero igualmente útil.
-                manager.setAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    target.toEpochMilliseconds(),
-                    operation
+        val exact = canScheduleExact(context)
+        val transitionAt = engine.nextTransition(now)
+
+        setAlarm(
+            manager = manager,
+            context = context,
+            triggerAt = transitionAt,
+            requestCode = REQUEST_TRANSITION,
+            action = TransitionReceiver.ACTION_TRANSITION,
+            exact = exact
+        )
+
+        if (settings.leadMinutes > 0) {
+            val leadAt = transitionAt - settings.leadMinutes.minutes
+            if (leadAt > now) {
+                setAlarm(
+                    manager = manager,
+                    context = context,
+                    triggerAt = leadAt,
+                    requestCode = REQUEST_LEAD,
+                    action = TransitionReceiver.ACTION_LEAD,
+                    exact = exact
                 )
             }
-            true
-        } catch (_: SecurityException) {
-            false
+        } else {
+            cancelLead(context)
         }
+
+        return true
     }
 
     fun cancel(context: Context) {
-        context.getSystemService(AlarmManager::class.java)?.cancel(pendingIntent(context))
+        val manager = context.getSystemService(AlarmManager::class.java) ?: return
+        manager.cancel(pendingIntent(context, REQUEST_TRANSITION, TransitionReceiver.ACTION_TRANSITION))
+        cancelLead(context)
     }
 
-    private fun pendingIntent(context: Context): PendingIntent {
-        val intent = Intent(context, TransitionReceiver::class.java)
-            .setAction(TransitionReceiver.ACTION_TRANSITION)
+    private fun cancelLead(context: Context) {
+        val manager = context.getSystemService(AlarmManager::class.java) ?: return
+        manager.cancel(pendingIntent(context, REQUEST_LEAD, TransitionReceiver.ACTION_LEAD))
+    }
+
+    private fun setAlarm(
+        manager: AlarmManager,
+        context: Context,
+        triggerAt: Instant,
+        requestCode: Int,
+        action: String,
+        exact: Boolean
+    ) {
+        val operation = pendingIntent(context, requestCode, action)
+        val triggerAtMs = triggerAt.toEpochMilliseconds()
+
+        try {
+            if (exact) {
+                manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, operation)
+            } else {
+                // Sin permiso de alarma exacta: aviso aproximado pero igualmente útil.
+                manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, operation)
+            }
+        } catch (_: SecurityException) {
+            manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, operation)
+        }
+    }
+
+    private fun pendingIntent(context: Context, requestCode: Int, action: String): PendingIntent {
+        val intent = Intent(context, TransitionReceiver::class.java).setAction(action)
         return PendingIntent.getBroadcast(
             context,
-            REQUEST_CODE,
+            requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

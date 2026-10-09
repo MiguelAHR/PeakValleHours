@@ -3,7 +3,12 @@ package com.peakvalle.hours.data.alarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import kotlinx.datetime.Clock
+import com.peakvalle.hours.data.settings.SettingsRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 /**
  * Las alarmas se pierden al reiniciar o al cambiar la hora o la zona horaria,
@@ -17,7 +22,16 @@ class BootReceiver : BroadcastReceiver() {
             Intent.ACTION_MY_PACKAGE_REPLACED,
             Intent.ACTION_TIME_CHANGED,
             Intent.ACTION_TIMEZONE_CHANGED -> {
-                TransitionScheduler.scheduleNext(context, Clock.System.now())
+                val pendingResult = goAsync()
+                val appContext = context.applicationContext
+                CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+                    try {
+                        val settings = SettingsRepository(appContext).settings.first()
+                        TransitionScheduler.scheduleNext(appContext, settings)
+                    } finally {
+                        pendingResult.finish()
+                    }
+                }
             }
         }
     }
