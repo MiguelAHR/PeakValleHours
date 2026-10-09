@@ -92,6 +92,7 @@ fun DashboardScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Header(state.now, zone)
+            NotificationPermissionCard()
             StatusCard(state.rate, zone)
             NextChangeCard(state.rate, zone)
             AgendaCard(state.agenda, zone)

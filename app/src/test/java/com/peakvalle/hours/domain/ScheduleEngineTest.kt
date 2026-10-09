@@ -128,6 +128,19 @@ class ScheduleEngineTest {
     }
 
     @Test
+    fun `cada transicion programa siempre una siguiente valida`() {
+        // Simula la cadena de alarmas: cada aviso debe agendar el próximo.
+        var moment = at("2026-01-05T00:00:00Z")
+        repeat(60) {
+            val statusBefore = engine.currentRate(moment).status
+            val next = engine.nextTransition(moment)
+            assertTrue("la transicion avanza en $moment", next > moment)
+            assertEquals("el estado cambia en $next", true, engine.currentRate(next).status != statusBefore)
+            moment = next
+        }
+    }
+
+    @Test
     fun `el progreso crece dentro de la ventana`() {
         val start = engine.currentRate(at("2026-01-05T06:00:00Z"))
         val middle = engine.currentRate(at("2026-01-05T08:00:00Z"))

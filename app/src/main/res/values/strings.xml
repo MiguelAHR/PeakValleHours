@@ -16,4 +16,22 @@
 
     <string name="legend_peak">PEAK</string>
     <string name="legend_valle">VALLE</string>
+
+    <!-- Notificaciones -->
+    <string name="channel_transitions_name">Cambios de tarifa</string>
+    <string name="channel_transitions_desc">Aviso al entrar en HORA PEAK o HORA VALLE de DeepSeek</string>
+    <string name="channel_status_name">Estado actual</string>
+    <string name="channel_status_desc">Estado de la tarifa vigente, sin sonido</string>
+
+    <string name="notif_title_peak">Entró la HORA PEAK</string>
+    <string name="notif_title_valle">Entró la HORA VALLE</string>
+    <string name="notif_body_peak">Ahora pagas precio completo. La próxima HORA VALLE empieza a las %1$s.</string>
+    <string name="notif_body_valle">Ahora pagas 50%% menos. La próxima HORA PEAK empieza a las %1$s.</string>
+
+    <!-- Permisos -->
+    <string name="perm_notifications_title">Activa las notificaciones</string>
+    <string name="perm_notifications_body">PeakValle te avisa en el momento exacto en que DeepSeek cambia de tarifa.</string>
+    <string name="perm_notifications_action">Activar</string>
+    <string name="perm_exact_alarm_body">Sin permiso de alarma exacta, el aviso puede llegar con unos minutos de retraso.</string>
+    <string name="perm_exact_alarm_action">Abrir ajustes</string>
 </resources>
